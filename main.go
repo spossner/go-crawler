@@ -3,24 +3,36 @@ package main
 import (
 	"fmt"
 	"github.com/spossner/go-crawler/internal/crawler"
+	"log"
 	"os"
+	"strconv"
 )
+
+func parseInt(src string, defaultValue int) int {
+	if i, err := strconv.Atoi(src); err == nil {
+		return i
+	}
+	return defaultValue
+}
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("no website provided")
-		os.Exit(1)
+		log.Fatalln("no website provided")
 	}
-
-	if len(os.Args) > 2 {
-		fmt.Println("too many arguments provided")
-		os.Exit(1)
-	}
-
 	base := os.Args[1]
+	ctx, err := crawler.NewContext(base)
+	if len(os.Args) > 2 {
+		ctx.SetMaxWorkers(parseInt(os.Args[2], 32))
+
+	}
+
+	if len(os.Args) > 3 {
+		ctx.SetMaxPages(parseInt(os.Args[3], 100))
+
+	}
+
 	fmt.Printf("starting crawl of: %s\n", base)
 
-	ctx, err := crawler.NewContext(base)
 	if err != nil {
 		fmt.Printf("error creating crawler context: %v", err)
 		os.Exit(1)
@@ -31,6 +43,6 @@ func main() {
 		fmt.Printf("error crawling page: %v", err)
 		os.Exit(1)
 	}
-	ctx.Wg.Wait()
+	ctx.WaitForWorkers()
 	fmt.Println(ctx)
 }
