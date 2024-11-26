@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"net/url"
 	"reflect"
 	"testing"
 )
@@ -94,7 +95,12 @@ func TestGetURLsFromHTML(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetURLsFromHTML(tt.args.htmlBody, tt.args.rawBaseURL)
+			baseUrl, err := url.Parse(tt.args.rawBaseURL)
+			if err != nil {
+				t.Errorf("GetURLsFromHTML() invalid base url %v in test setup: %v", tt.args.rawBaseURL, err)
+				return
+			}
+			got, err := GetURLsFromHTML(tt.args.htmlBody, baseUrl)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetURLsFromHTML() error = %v, wantErr %v", err, tt.wantErr)
 				return

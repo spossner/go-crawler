@@ -7,15 +7,10 @@ import (
 	"strings"
 )
 
-func GetURLsFromHTML(htmlBody, rawBaseURL string) ([]string, error) {
+func GetURLsFromHTML(htmlBody string, baseUrl *url.URL) ([]string, error) {
 	urls := make([]string, 0)
 
 	doc, err := html.Parse(strings.NewReader(htmlBody))
-	if err != nil {
-		return nil, err
-	}
-
-	base, err := url.Parse(rawBaseURL)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +23,7 @@ func GetURLsFromHTML(htmlBody, rawBaseURL string) ([]string, error) {
 					if err != nil {
 						return nil, err
 					}
-					foundUrl := base.ResolveReference(u)
+					foundUrl := baseUrl.ResolveReference(u)
 					urls = append(urls, foundUrl.String())
 					break
 				}

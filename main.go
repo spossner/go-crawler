@@ -20,10 +20,17 @@ func main() {
 	base := os.Args[1]
 	fmt.Printf("starting crawl of: %s\n", base)
 
-	pages, err := crawler.CrawlPage(base, base, make(map[string]int))
+	ctx, err := crawler.NewContext(base)
 	if err != nil {
-		fmt.Printf("error crawling page: %w", err)
+		fmt.Printf("error creating crawler context: %v", err)
 		os.Exit(1)
 	}
-	fmt.Println(pages)
+
+	err = crawler.CrawlPage(ctx, base)
+	if err != nil {
+		fmt.Printf("error crawling page: %v", err)
+		os.Exit(1)
+	}
+	ctx.Wg.Wait()
+	fmt.Println(ctx)
 }
