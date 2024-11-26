@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/spossner/go-crawler/internal/utils"
+	"github.com/spossner/go-crawler/internal/crawler"
 	"os"
 )
 
@@ -20,10 +20,10 @@ func main() {
 	base := os.Args[1]
 	fmt.Printf("starting crawl of: %s\n", base)
 
-	html, err := utils.GetHTML(base)
+	pages, err := crawler.CrawlPage(base, base, make(map[string]int))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("error crawling page: %w", err)
 		os.Exit(1)
 	}
-	fmt.Println(html)
+	fmt.Println(pages)
 }

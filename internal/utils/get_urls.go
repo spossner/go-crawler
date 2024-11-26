@@ -24,7 +24,6 @@ func GetURLsFromHTML(htmlBody, rawBaseURL string) ([]string, error) {
 		if n.Type == html.ElementNode && n.DataAtom == atom.A {
 			for _, a := range n.Attr {
 				if a.Key == "href" {
-
 					u, err := url.Parse(a.Val)
 					if err != nil {
 						return nil, err
